@@ -1,0 +1,329 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public abstract class Cliente
+{
+    public string Nombre { get; set; }
+    public string Correo { get; set; }
+    public string Direccion { get; set; }
+    public Cliente(string nombre, string correo, string direccion)
+    {
+        Nombre = nombre;
+        Correo = correo;
+        Direccion = direccion;
+    }
+    public abstract double ObtenerDescuento();
+}
+
+public class ClienteRegular : Cliente
+{
+    public ClienteRegular(string nombre, string correo, string direccion) : base(nombre, correo, direccion) { }
+    public override double ObtenerDescuento()
+    {return 0;}
+}
+
+public class ClienteVIP : Cliente
+{
+    public ClienteVIP(string nombre, string correo, string direccion) : base(nombre, correo, direccion) { }
+    public override double ObtenerDescuento()
+    {return 0.1;}
+}
+
+public class ClienteCorporativo : Cliente
+{
+    public List<Vehiculo> Vehiculos { get; set; }
+    public ClienteCorporativo(string nombre, string correo, string direccion) : base(nombre, correo, direccion)
+    {Vehiculos = new List<Vehiculo>();}
+    public override double ObtenerDescuento()
+    {return 0.2;}
+}
+
+public abstract class Vehiculo
+{
+    public string Matricula { get; set; }
+    public string Modelo { get; set; }
+    public string TipoCombustible { get; set; }
+    public Vehiculo(string matricula, string modelo, string tipoCombustible)
+    {
+        Matricula = matricula;
+        Modelo = modelo;
+        TipoCombustible = tipoCombustible;
+    }
+}
+
+public class VehiculoPersonal : Vehiculo
+{
+    public VehiculoPersonal(string matricula, string modelo, string tipoCombustible) : base(matricula, modelo, tipoCombustible) { }
+}
+
+public class VehiculoCorporativo : Vehiculo
+{
+    public VehiculoCorporativo(string matricula, string modelo, string tipoCombustible) : base(matricula, modelo, tipoCombustible) { }
+}
+
+public class Pedido
+{
+    public int Numero { get; set; }
+    public DateTime Fecha { get; set; }
+    public Cliente Cliente { get; set; }
+    public List<Producto> Productos { get; set; }
+
+    public Pedido(int numero, DateTime fecha, Cliente cliente)
+    {
+        Numero = numero;
+        Fecha = fecha;
+        Cliente = cliente;
+        Productos = new List<Producto>();
+    }
+
+    public double CalcularTotal()
+    {
+        double total = Productos.Sum(producto => producto.Precio);
+        return total * (1 - Cliente.ObtenerDescuento());
+    }
+}
+
+public class Producto
+{
+    public string Nombre { get; set; }
+    public double Precio { get; set; }
+
+    public Producto(string nombre, double precio)
+    {
+        Nombre = nombre;
+        Precio = precio;
+    }
+}
+
+class Program
+{
+    static List<Cliente> clientes = new List<Cliente>();
+    static List<Vehiculo> vehiculos = new List<Vehiculo>();
+    static List<Pedido> pedidos = new List<Pedido>();
+
+    static void Main(string[] args)
+    {
+        int opcion;
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("\nMenú:");
+            Console.WriteLine("|1| Registrar Cliente Regular");
+            Console.WriteLine("|2| Registrar Cliente VIP");
+            Console.WriteLine("|3| Registrar Cliente Corporativo");
+            Console.WriteLine("|4| Registrar Vehículo Personal");
+            Console.WriteLine("|5| Registrar Vehículo Corporativo");
+            Console.WriteLine("|6| Registrar Pedido");
+            Console.WriteLine("|7| Mostrar Detalles de Clientes");
+            Console.WriteLine("|8| Mostrar Detalles de Vehículos");
+            Console.WriteLine("|9| Mostrar Detalles de Pedidos");
+            Console.WriteLine("|10| Buscar Cliente por Nombre");
+            Console.WriteLine("|11| Buscar Vehículo por Matrícula");
+            Console.WriteLine("|12| Buscar Pedido por Número");
+            Console.WriteLine("|13| Salir");
+            Console.Write("Seleccione una opción: ");
+            
+
+            if (!int.TryParse(Console.ReadLine(), out opcion))
+            {
+                Console.WriteLine("Opción no válida. Intente nuevamente.");
+                continue;
+            }
+
+            switch (opcion)
+            {
+                case 1:
+                    RegistrarClienteRegular();
+                    break;
+                case 2:
+                    RegistrarClienteVIP();
+                    break;
+                case 3:
+                    RegistrarClienteCorporativo();
+                    break;
+                case 4:
+                    RegistrarVehiculoPersonal();
+                    break;
+                case 5:
+                    RegistrarVehiculoCorporativo();
+                    break;
+                case 6:
+                    RegistrarPedido();
+                    break;
+                case 7:
+                    MostrarDetallesClientes();
+                    break;
+                case 8:
+                    MostrarDetallesVehiculos();
+                    break;
+                case 9:
+                    MostrarDetallesPedidos();
+                    break;
+                case 10:
+                    BuscarClientePorNombre();
+                    break;
+                case 11:
+                    BuscarVehiculoPorMatricula();
+                    break;
+                case 12:
+                    BuscarPedidoPorNumero();
+                    break;
+                case 13:
+                    Console.WriteLine("Saliendo...");
+                    break;
+                default:
+                    Console.WriteLine("Opción no válida. Intente nuevamente.");
+                    break;
+            }
+            Console.ReadKey();
+        } while (opcion != 13);
+    }
+
+    static void RegistrarClienteRegular()
+    {
+        Console.Write("Nombre: ");
+        string nombre = Console.ReadLine();
+        Console.Write("Correo: ");
+        string correo = Console.ReadLine();
+        Console.Write("Dirección: ");
+        string direccion = Console.ReadLine();
+        clientes.Add(new ClienteRegular(nombre, correo, direccion));
+        Console.WriteLine("Cliente Regular registrado.");
+    }
+
+    static void RegistrarClienteVIP()
+    {
+        Console.Write("Nombre: ");
+        string nombre = Console.ReadLine();
+        Console.Write("Correo: ");
+        string correo = Console.ReadLine();
+        Console.Write("Dirección: ");
+        string direccion = Console.ReadLine();
+        clientes.Add(new ClienteVIP(nombre, correo, direccion));
+        Console.WriteLine("Cliente VIP registrado.");
+    }
+
+    static void RegistrarClienteCorporativo()
+    {
+        Console.Write("Nombre: ");
+        string nombre = Console.ReadLine();
+        Console.Write("Correo: ");
+        string correo = Console.ReadLine();
+        Console.Write("Dirección: ");
+        string direccion = Console.ReadLine();
+        clientes.Add(new ClienteCorporativo(nombre, correo, direccion));
+        Console.WriteLine("Cliente Corporativo registrado.");
+    }
+
+    static void RegistrarVehiculoPersonal()
+    {
+        Console.Write("Matrícula: ");
+        string matricula = Console.ReadLine();
+        Console.Write("Modelo: ");
+        string modelo = Console.ReadLine();
+        Console.Write("Tipo de Combustible: ");
+        string tipoCombustible = Console.ReadLine();
+        vehiculos.Add(new VehiculoPersonal(matricula, modelo, tipoCombustible));
+        Console.WriteLine("Vehículo Personal registrado.");
+    }
+
+    static void RegistrarVehiculoCorporativo()
+    {
+        Console.Write("Matrícula: ");
+        string matricula = Console.ReadLine();
+        Console.Write("Modelo: ");
+        string modelo = Console.ReadLine();
+        Console.Write("Tipo de Combustible: ");
+        string tipoCombustible = Console.ReadLine();
+        vehiculos.Add(new VehiculoCorporativo(matricula, modelo, tipoCombustible));
+        Console.WriteLine("Vehículo Corporativo registrado.");
+    }
+
+    static void RegistrarPedido()
+    {
+        Console.Write("Número de Pedido: ");
+        int numero = int.Parse(Console.ReadLine());
+        Console.Write("Fecha (dd/mm/yyyy): ");
+        DateTime fecha = DateTime.Parse(Console.ReadLine());
+
+        Console.Write("Nombre del Cliente: ");
+        string nombreCliente = Console.ReadLine();
+        var cliente = clientes.Find(c => c.Nombre == nombreCliente);
+        if (cliente == null)
+        {
+            Console.WriteLine("Cliente no encontrado.");
+            return;
+        }
+
+        Pedido pedido = new Pedido(numero, fecha, cliente);
+
+        Console.Write("Número de productos a agregar: ");
+        int numProductos = int.Parse(Console.ReadLine());
+        for (int i = 0; i < numProductos; i++)
+        {
+            Console.Write("Nombre del producto: ");
+            string nombreProducto = Console.ReadLine();
+            Console.Write("Precio del producto: ");
+            double precioProducto = double.Parse(Console.ReadLine());
+            pedido.Productos.Add(new Producto(nombreProducto, precioProducto));
+        }
+
+        pedidos.Add(pedido);
+        Console.WriteLine("Pedido registrado.");
+    }
+
+    static void MostrarDetallesClientes()
+    {
+        Console.WriteLine("Clientes registrados:");
+        foreach (var cliente in clientes)
+        {Console.WriteLine($"Nombre: {cliente.Nombre}, Correo: {cliente.Correo}, Dirección: {cliente.Direccion}");}
+    }
+
+    static void MostrarDetallesVehiculos()
+    {
+        Console.WriteLine("Vehículos registrados:");
+        foreach (var vehiculo in vehiculos)
+        {Console.WriteLine($"Matrícula: {vehiculo.Matricula}, Modelo: {vehiculo.Modelo}, Tipo de Combustible: {vehiculo.TipoCombustible}");}
+    }
+
+    static void MostrarDetallesPedidos()
+    {
+        Console.WriteLine("Pedidos registrados:");
+        foreach (var pedido in pedidos)
+        {Console.WriteLine($"Número: {pedido.Numero}, Fecha: {pedido.Fecha}, Cliente: {pedido.Cliente.Nombre}, Total: {pedido.CalcularTotal()}");}
+    }
+
+    static void BuscarClientePorNombre()
+    {
+        Console.Write("Nombre del cliente a buscar: ");
+        string nombre = Console.ReadLine();
+        var cliente = clientes.Find(c => c.Nombre == nombre);
+        if (cliente != null)
+        {Console.WriteLine($"Cliente encontrado: Nombre: {cliente.Nombre}, Correo: {cliente.Correo}, Dirección: {cliente.Direccion}");}
+        else
+        {Console.WriteLine("Cliente no encontrado.");}
+    }
+
+    static void BuscarVehiculoPorMatricula()
+    {
+        Console.Write("Matrícula del vehículo a buscar: ");
+        string matricula = Console.ReadLine();
+        var vehiculo = vehiculos.Find(v => v.Matricula == matricula);
+        if (vehiculo != null)
+        {Console.WriteLine($"Vehículo encontrado: Matrícula: {vehiculo.Matricula}, Modelo: {vehiculo.Modelo}, Tipo de Combustible: {vehiculo.TipoCombustible}");}
+        else
+        {Console.WriteLine("Vehículo no encontrado.");}
+    }
+
+    static void BuscarPedidoPorNumero()
+    {
+        Console.Write("Número de pedido a buscar: ");
+        int numero = int.Parse(Console.ReadLine());
+        var pedido = pedidos.Find(p => p.Numero == numero);
+        if (pedido != null)
+        {Console.WriteLine($"Pedido encontrado: Número: {pedido.Numero}, Fecha: {pedido.Fecha}, Cliente: {pedido.Cliente.Nombre}, Total: {pedido.CalcularTotal()}");}
+        else
+        { Console.WriteLine("Pedido no encontrado.");}
+    }
+}
