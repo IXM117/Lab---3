@@ -1,4 +1,4 @@
-## Descripción del Proyecto (B)
+# Descripción del Proyecto (B)
 
 Este proyecto es una aplicación de consola en C# que gestiona un sistema de reservas para un restaurante. Permite registrar clientes, crear reservas y calcular totales con descuentos basados en el tipo de cliente (Regular o VIP).
 
