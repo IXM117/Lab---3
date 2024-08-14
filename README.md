@@ -1,4 +1,4 @@
-# TiendaManager
+# Descripción del proyecto (A)
 
 **TiendaManager** es una aplicación de gestión para una tienda que permite registrar y administrar clientes, vehículos y pedidos. La aplicación está diseñada para facilitar la gestión de datos y mejorar la eficiencia operativa de la tienda.
 
